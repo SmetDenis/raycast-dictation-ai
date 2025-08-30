@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { createReadStream } from "fs";
+import { readFile } from "fs/promises";
 import { getPreferenceValues } from "@raycast/api";
 import { ErrorTypes, Preferences, DetailedTranscriptionResult } from "../types";
 import { handleOpenAIError } from "./errors";
@@ -53,20 +54,35 @@ export async function transcribeAudio(filePath: string): Promise<string> {
   return result.text;
 }
 
-function createTranscription(
+async function loadTranscriptionContext(filePath?: string): Promise<string | undefined> {
+  if (!filePath || filePath.trim() === "") {
+    return undefined;
+  }
+
+  try {
+    const content = await readFile(filePath, "utf-8");
+    return content.trim() || undefined;
+  } catch (error) {
+    console.warn(`Failed to read transcription context file: ${filePath}`, error);
+    return undefined;
+  }
+}
+
+async function createTranscription(
   openai: OpenAI,
   audioFile: ReturnType<typeof createReadStream>,
   preferences: Preferences,
 ) {
   const rawTemperature = preferences.temperature ?? 0;
   const temperature = Math.max(0, Math.min(1, rawTemperature));
+  const transcriptionContext = await loadTranscriptionContext(preferences.promptFile);
 
   return openai.audio.transcriptions.create({
     file: audioFile,
     model: preferences.model || "whisper-1",
     language:
       preferences.language === "auto" ? undefined : preferences.language,
-    prompt: preferences.prompt?.trim() || undefined,
+    prompt: transcriptionContext,
     response_format: "text",
     temperature: temperature,
   });

@@ -8,24 +8,28 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 type ExtensionPreferences = {
-  /** OpenAI API Key - Your OpenAI API key */
+  /** OpenAI API Key - Your OpenAI API key for speech transcription */
   "openaiApiKey": string,
+  /** OpenRouter API Key - Your OpenRouter API key for text formatting */
+  "openrouterApiKey": string,
+  /** OpenRouter Model - OpenRouter model ID for text formatting (e.g., google/gemini-2.5-flash, openai/gpt-4o-mini, anthropic/claude-3.5-sonnet) */
+  "openrouterModel": string,
   /** Whisper Model - Select the transcription model */
   "model": "gpt-4o-transcribe" | "whisper-1",
   /** Language - Language for transcription (auto-detect if not specified) */
   "language": "auto" | "en" | "es" | "fr" | "de" | "it" | "pt" | "zh" | "ja" | "ko" | "ru",
-  /** Custom Prompt - Optional prompt to guide transcription style, terminology, or context */
-  "prompt"?: string,
+  /** Custom Transcription Context File - File with context to improve speech recognition accuracy (names, technical terms, abbreviations) */
+  "promptFile"?: string,
   /** Temperature - Sampling temperature for more creative or conservative transcription */
   "temperature": "0" | "0.2" | "0.5" | "0.8" | "1.0",
-  /** Custom Email Prompt - Custom prompt for email formatting (leave empty to use default) */
-  "customPromptEmail": string,
-  /** Custom Slack Prompt - Custom prompt for Slack message formatting (leave empty to use default) */
-  "customPromptSlack": string,
-  /** Custom Report Prompt - Custom prompt for report formatting (leave empty to use default) */
-  "customPromptReport": string,
-  /** Custom Translation Prompt - Custom prompt for English translation (leave empty to use default) */
-  "customPromptTranslate": string
+  /** Custom Email Prompt File - File containing custom email prompt (leave empty to use default) */
+  "customPromptEmailFile"?: string,
+  /** Custom Slack Prompt File - File containing custom Slack prompt (leave empty to use default) */
+  "customPromptSlackFile"?: string,
+  /** Custom Report Prompt File - File containing custom report prompt (leave empty to use default) */
+  "customPromptReportFile"?: string,
+  /** Custom Translation Prompt File - File containing custom translation prompt (leave empty to use default) */
+  "customPromptTranslateFile"?: string
 }
 
 /** Preferences accessible in all the extension's commands */

@@ -18,6 +18,9 @@ export const enum ErrorTypes {
   SOX_NOT_INSTALLED = "Sox is not installed",
   TRANSCRIPTION_FAILED = "Transcription failed",
   API_KEY_MISSING = "OpenAI API key is required",
+  OPENROUTER_API_KEY_MISSING = "OpenRouter API key is required",
+  PROMPT_FILE_NOT_FOUND = "Custom prompt file not found",
+  PROMPT_FILE_READ_ERROR = "Failed to read custom prompt file",
 }
 
 export interface AudioValidationResult {
@@ -29,7 +32,12 @@ export type WhisperModel = "whisper-1" | "gpt-4o-transcribe";
 
 export type ResponseFormat = "text" | "verbose_json" | "srt" | "vtt";
 
-export type FormatMode = "email" | "slack" | "report" | "translate" | "original";
+export type FormatMode =
+  | "email"
+  | "slack"
+  | "report"
+  | "translate"
+  | "original";
 
 export type TranscriptionState =
   | "idle"
@@ -41,14 +49,16 @@ export type TranscriptionState =
 
 export interface Preferences {
   openaiApiKey: string;
+  openrouterApiKey: string;
+  openrouterModel?: string;
   model: WhisperModel;
   language: string;
-  prompt?: string;
+  promptFile?: string;
   temperature?: number;
-  customPromptEmail?: string;
-  customPromptSlack?: string;
-  customPromptReport?: string;
-  customPromptTranslate?: string;
+  customPromptEmailFile?: string;
+  customPromptSlackFile?: string;
+  customPromptReportFile?: string;
+  customPromptTranslateFile?: string;
 }
 
 export interface TranscriptionMetadata {

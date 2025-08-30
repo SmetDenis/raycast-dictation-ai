@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { getPreferenceValues } from "@raycast/api";
+import { readFile } from "fs/promises";
 import { Preferences, ErrorTypes } from "../types";
 import { handleOpenAIError } from "./errors";
 
@@ -35,24 +36,68 @@ Provide only the translated/improved text without explanations or notes.
 Text to translate:`,
 };
 
-function getFormattingPrompt(mode: "email" | "slack" | "report" | "translate"): string {
+async function loadPromptFromFile(filePath?: string): Promise<string | null> {
+  if (!filePath || filePath.trim() === "") {
+    return null;
+  }
+
+  try {
+    const content = await readFile(filePath, "utf-8");
+    return content.trim();
+  } catch (error: unknown) {
+    if (
+      error instanceof Error &&
+      "code" in error &&
+      (error as NodeJS.ErrnoException).code === "ENOENT"
+    ) {
+      console.error(`Prompt file not found: ${filePath}`);
+      throw new Error(ErrorTypes.PROMPT_FILE_NOT_FOUND);
+    }
+    console.error(`Failed to read prompt file: ${filePath}`, error);
+    throw new Error(ErrorTypes.PROMPT_FILE_READ_ERROR);
+  }
+}
+
+async function getFormattingPrompt(
+  mode: "email" | "slack" | "report" | "translate",
+): Promise<string> {
   const preferences = getPreferenceValues<Preferences>();
 
-  switch (mode) {
-    case "email":
-      return preferences.customPromptEmail || DEFAULT_FORMATTING_PROMPTS.email;
-    case "slack":
-      return preferences.customPromptSlack || DEFAULT_FORMATTING_PROMPTS.slack;
-    case "report":
-      return (
-        preferences.customPromptReport || DEFAULT_FORMATTING_PROMPTS.report
-      );
-    case "translate":
-      return (
-        preferences.customPromptTranslate || DEFAULT_FORMATTING_PROMPTS.translate
-      );
-    default:
-      return DEFAULT_FORMATTING_PROMPTS[mode];
+  try {
+    switch (mode) {
+      case "email": {
+        const emailPrompt = await loadPromptFromFile(
+          preferences.customPromptEmailFile,
+        );
+        return emailPrompt || DEFAULT_FORMATTING_PROMPTS.email;
+      }
+      case "slack": {
+        const slackPrompt = await loadPromptFromFile(
+          preferences.customPromptSlackFile,
+        );
+        return slackPrompt || DEFAULT_FORMATTING_PROMPTS.slack;
+      }
+      case "report": {
+        const reportPrompt = await loadPromptFromFile(
+          preferences.customPromptReportFile,
+        );
+        return reportPrompt || DEFAULT_FORMATTING_PROMPTS.report;
+      }
+      case "translate": {
+        const translatePrompt = await loadPromptFromFile(
+          preferences.customPromptTranslateFile,
+        );
+        return translatePrompt || DEFAULT_FORMATTING_PROMPTS.translate;
+      }
+      default:
+        return DEFAULT_FORMATTING_PROMPTS[mode];
+    }
+  } catch (error) {
+    console.warn(
+      `Failed to load custom prompt for ${mode}, using default:`,
+      error,
+    );
+    return DEFAULT_FORMATTING_PROMPTS[mode];
   }
 }
 
@@ -68,28 +113,28 @@ export async function formatTextWithChatGPT(
   mode: "email" | "slack" | "report" | "translate",
 ): Promise<string> {
   const preferences = getPreferenceValues<Preferences>();
-  const prompt = getFormattingPrompt(mode);
+  const prompt = await getFormattingPrompt(mode);
   const sanitizedText = sanitizeText(text);
 
-  if (!preferences.openaiApiKey) {
-    throw new Error(ErrorTypes.API_KEY_MISSING);
+  if (!preferences.openrouterApiKey) {
+    throw new Error(ErrorTypes.OPENROUTER_API_KEY_MISSING);
   }
 
-  const openai = new OpenAI({
-    apiKey: preferences.openaiApiKey,
+  const openrouter = new OpenAI({
+    apiKey: preferences.openrouterApiKey,
+    baseURL: "https://openrouter.ai/api/v1",
   });
 
   try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const response = await openrouter.chat.completions.create({
+      model: preferences.openrouterModel || "google/gemini-2.5-flash",
       messages: [
         {
           role: "user",
           content: `${prompt}\n\n"${sanitizedText}"`,
         },
       ],
-      temperature: 0,
-      max_tokens: 1000,
+      temperature: 0
     });
 
     return response.choices[0]?.message?.content?.trim() || text;
