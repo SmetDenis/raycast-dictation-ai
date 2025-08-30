@@ -36,6 +36,18 @@ Provide only the translated/improved text without explanations or notes.
 Text to translate:`,
 };
 
+function extractPromptFromContent(content: string): string {
+  // Try to find prompt in ## Prompt section with code blocks
+  const promptPattern = /## Prompt\s*```(?:xml|markdown)\s*([\s\S]*?)```/i;
+  const match = content.match(promptPattern);
+  
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  
+  return content.trim();
+}
+
 async function loadPromptFromFile(filePath?: string): Promise<string | null> {
   if (!filePath || filePath.trim() === "") {
     return null;
@@ -43,7 +55,7 @@ async function loadPromptFromFile(filePath?: string): Promise<string | null> {
 
   try {
     const content = await readFile(filePath, "utf-8");
-    return content.trim();
+    return extractPromptFromContent(content);
   } catch (error: unknown) {
     if (
       error instanceof Error &&
@@ -131,7 +143,7 @@ export async function formatTextWithChatGPT(
       messages: [
         {
           role: "user",
-          content: `${prompt}\n\n"${sanitizedText}"`,
+          content: `${prompt}\n\n<input-text>${sanitizedText}</input-text>`,
         },
       ],
       temperature: 0

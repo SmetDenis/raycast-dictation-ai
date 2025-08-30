@@ -54,6 +54,18 @@ export async function transcribeAudio(filePath: string): Promise<string> {
   return result.text;
 }
 
+function extractTranscriptionContext(content: string): string {
+  // Try to find prompt in ## Prompt section with code blocks
+  const promptPattern = /## Prompt\s*```(?:xml|markdown)\s*([\s\S]*?)```/i;
+  const match = content.match(promptPattern);
+  
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  
+  return content.trim();
+}
+
 async function loadTranscriptionContext(filePath?: string): Promise<string | undefined> {
   if (!filePath || filePath.trim() === "") {
     return undefined;
@@ -61,7 +73,8 @@ async function loadTranscriptionContext(filePath?: string): Promise<string | und
 
   try {
     const content = await readFile(filePath, "utf-8");
-    return content.trim() || undefined;
+    const extractedContext = extractTranscriptionContext(content);
+    return extractedContext || undefined;
   } catch (error) {
     console.warn(`Failed to read transcription context file: ${filePath}`, error);
     return undefined;
@@ -79,9 +92,8 @@ async function createTranscription(
 
   return openai.audio.transcriptions.create({
     file: audioFile,
-    model: preferences.model || "whisper-1",
-    language:
-      preferences.language === "auto" ? undefined : preferences.language,
+    model: preferences.model || "gpt-4o-transcribe",
+    language: preferences.language === "auto" ? undefined : preferences.language,
     prompt: transcriptionContext,
     response_format: "text",
     temperature: temperature,
