@@ -2,6 +2,10 @@
 
 A powerful Raycast extension that converts speech to text using OpenAI's Whisper and formats the output with OpenRouter models. Perfect for quick dictation, note-taking, and professional communication.
 
+> **Note**: This project is a fork of [Advanced Speech to Text](https://www.raycast.com/inakitajes/advanced-speech-to-text) by Iñaki Tajes. Special thanks to Iñaki for creating the original extension that served as the foundation for this enhanced version.
+
+📖 **[Русская версия / Russian version](README_RUS.md)**
+
 ## Features
 
 - **Instant Recording**: Auto-starts recording when opened for immediate use

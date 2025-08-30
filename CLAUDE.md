@@ -88,3 +88,33 @@ Centralized error management through `src/utils/errors.ts`:
 - Requires OpenAI API key configuration
 - SoX must be installed via Homebrew/MacPorts for audio recording
 - Use context7 MCP to load Raycast API documentation when developing extensions
+
+## Documentation Synchronization Rules
+
+When making changes to the codebase that affect functionality, features, or configuration:
+
+1. **Always update both README files**: Update both `README.md` (English) and `README_RUS.md` (Russian) to reflect code changes
+2. **Keep documentation accurate**: Ensure all examples, API references, configuration options, and feature descriptions match the actual code
+3. **Sync immediately**: Update documentation in the same session as code changes, not as a separate task
+4. **Maintain consistency**: Keep both language versions synchronized - if you update one, update the other
+5. **Check for impacts**: When modifying:
+   - API interfaces or function signatures
+   - Configuration options or preferences
+   - Available commands or features
+   - Error messages or types
+   - File structures or dependencies
+   - Installation or setup requirements
+
+Examples of changes that require README updates:
+- Adding/removing preferences in package.json
+- Changing default values or options
+- Adding new commands or features
+- Modifying error handling or types
+- Changing API integrations
+- Updating dependencies or requirements
+
+# important-instruction-reminders
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
