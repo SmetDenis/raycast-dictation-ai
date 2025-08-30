@@ -1,278 +1,229 @@
-# Advanced Speech to Text Extension for Raycast
+# Dictation AI
 
-A powerful and easy-to-use extension for Raycast that converts voice to text using OpenAI's most advanced models, including GPT-4o-transcribe.
+A powerful Raycast extension that converts speech to text using OpenAI's Whisper and formats the output with OpenRouter models. Perfect for quick dictation, note-taking, and professional communication.
 
-## ✨ Key Features
+## Features
 
-- **Instant Recording**: Starts recording immediately when opening the extension
-- **Automatic Transcription**: Automatically transcribes when you stop recording
-- **Smart Formatting**: Converts your text to different formats (Email, Slack, Report)
-- **Customizable Prompts**: Configure custom prompts for each type of format
-- **Multiple Models**: Support for Whisper-1 and GPT-4o Transcribe
-- **99+ Languages**: Auto-detection or manual language selection
-- **History**: Save and manage your recording history
+- **Instant Recording**: Auto-starts recording when opened for immediate use
+- **High-Quality Transcription**: Uses OpenAI's GPT-4o Transcribe and Whisper models
+- **Smart Text Formatting**: Format transcriptions for different contexts using OpenRouter models
+- **Multiple Output Formats**: Original, Email, Slack, Report, and Translation modes
+- **Recording History**: View and manage past recordings with transcriptions
+- **Custom Prompts**: Use custom prompt files for transcription context and formatting
+- **Auto-Paste**: Automatically inserts formatted text into the active field
+- **Multi-Language Support**: Supports 10+ languages with auto-detection
 
-## 🚀 Available Commands
+## Installation
 
-### Dictate
+1. Install the extension from the [Raycast Store](https://www.raycast.com/extensions)
+2. Install SoX (Sound eXchange) for audio recording:
+   ```bash
+   # Using Homebrew
+   brew install sox
+   
+   # Using MacPorts
+   sudo port install sox
+   ```
+3. Configure your API keys in Raycast preferences
 
-- **Function**: Instant recording with automatic transcription
-- **Usage**: Opens directly in recording mode, press Enter to stop and transcribe
+## Setup
+
+### Required API Keys
+
+1. **OpenAI API Key**: For speech transcription
+   - Get your key from [OpenAI Platform](https://platform.openai.com/api-keys)
+   - Required for Whisper transcription
+
+2. **OpenRouter API Key**: For text formatting
+   - Get your key from [OpenRouter](https://openrouter.ai/keys)
+   - Required for formatting modes (Email, Slack, Report, Translation)
+
+### System Requirements
+
+- **SoX**: Required for audio recording
+- **macOS**: Raycast extension platform
+- **Microphone**: For audio input
+
+## Usage
+
+### Basic Dictation
+
+1. Open Raycast and type "Dictate"
+2. Recording starts automatically
+3. Speak your message
+4. Press Enter to stop and transcribe
+5. Text is automatically pasted to the active field
+
+### Format Modes
+
+While recording, you can choose different output formats:
+
+- **Original**: Raw transcription with auto-paste
+- **Email**: Professional email format with greetings and structure
+- **Slack**: Clean, casual message formatting
+- **Report**: Structured task/project reporting format
+- **Translation**: Translate to English or improve English text
 
 ### Recording History
 
-- **Function**: View and manage recording history
-- **Usage**: Search, copy or delete previous transcriptions
+- Access via "Recording History" command
+- View past recordings with metadata
+- Re-transcribe audio files
+- Copy transcriptions to clipboard
 
-## ⚙️ Configuration
+## Configuration
 
-### Basic Configuration
+### Transcription Settings
 
-- **OpenAI API Key**: Your OpenAI API key (required)
-- **Model**: Select between Whisper-1 or GPT-4o Transcribe (Recommended)
-- **Language**: Auto-detection or manual selection
-- **Temperature**: Controls the creativity of transcription
-- **Response Format**: Text, JSON, SRT or VTT
+- **Model**: Choose between GPT-4o Transcribe (latest) or Whisper-1 (classic)
+- **Language**: Auto-detect or specify language (English, Spanish, French, etc.)
+- **Temperature**: Control transcription creativity (0-1)
+- **Context File**: Custom prompt file to improve accuracy for specific terms
 
-### 🎯 Customizable Prompts (NEW)
+### Formatting Settings
 
-You can now fully customize the prompts for each type of format:
+- **OpenRouter Model**: Default is `google/gemini-2.5-flash`
+- **Custom Prompts**: Override default formatting prompts with custom files
 
-#### Custom Email Prompt
+### Custom Prompts
 
-- **Purpose**: Define how to format transcriptions as professional emails
-- **Default prompt**:
-  ```
-  Transform the following text into a professional and well-structured email.
-  Add an appropriate greeting, organize the information in clear paragraphs, and end with a professional closing.
-  Maintain a formal but friendly tone. Only return the email text, without subject.
-  ```
+You can provide custom prompt files for better transcription accuracy and formatting:
 
-#### Custom Slack Prompt
-
-- **Purpose**: Define how to format transcriptions for Slack messages
-- **Default prompt**:
-  ```
-  Transform the following text into an informal Slack message.
-  Make it conversational, direct and easy to read. Use emojis if appropriate and maintain a casual but professional tone.
-  Organize the information clearly and concisely.
-  ```
-
-#### Custom Report Prompt
-
-- **Purpose**: Define how to format transcriptions as structured reports
-- **Default prompt**:
-
-  ```
-  Transform the following text into a structured report for a task management system.
-  Organize the information with:
-  - **Objective/Task:** [clear description of what needs to be done]
-  - **Details:** [specific information and steps if any]
-  - **Requirements:** [if applicable, what is needed to complete the task]
-
-  Maintain a clear, professional and action-oriented format.
-  ```
-
-### 📝 Custom Prompt Examples
-
-#### For More Creative Emails:
+#### Transcription Context File
+Improves speech recognition for specific names, terms, or abbreviations:
 
 ```
-Convert the following text into a creative and persuasive email.
-Use a friendly but professional tone, include an eye-catching introduction
-and end with a clear call to action. Organize the information in a way
-that is easy to read and convincing.
+## Prompt
+```xml
+Context for speech recognition:
+- Company: Acme Corporation
+- Names: John Smith, Sarah Johnson
+- Technical terms: Kubernetes, PostgreSQL
+- Abbreviations: API, CI/CD, SLA
 ```
 
-#### For Slack with Specific Style:
+#### Custom Formatting Prompts
+Override default formatting with custom prompts:
 
 ```
-Transform this text into a Slack message for a development team.
-Use appropriate technical terminology, maintain a direct and collaborative tone.
-Include relevant development emojis (🚀 ✅ 🔧 etc.) and structure
-the information to facilitate quick responses.
+## Prompt
+```markdown
+Transform the following text into a casual team update email.
+Keep it friendly and conversational, focusing on progress and next steps.
 ```
 
-#### For Project Reports:
+## Technical Architecture
 
-```
-Convert this text into a project status report with the following sections:
-- **Executive Summary:** [brief overview of status]
-- **Current Progress:** [what has been completed]
-- **Next Steps:** [planned actions]
-- **Blockers:** [if any]
-- **Delivery Date:** [estimation if relevant]
-```
+### Core Components
 
-## 🎮 Workflow
+- **Dictate Command** (`src/dictate.tsx`): Main recording and transcription workflow
+- **Recording History** (`src/recording-history.tsx`): History management interface
+- **Audio Recorder Hook** (`src/hooks/useAudioRecorder.ts`): SoX integration for recording
 
-1. **Open "Dictate"** - Recording starts automatically
-2. **Speak clearly** - Say your message
-3. **Press Enter** to stop and transcribe, or select a specific format (Email, Slack, Report)
-4. **Result handling**:
-   - If using default format: Text is automatically pasted into the currently selected text field
-   - If using specific format (Email/Slack/Report): Review the formatted result and press Enter to paste
+### Audio System
 
-## 🚀 Setup & Installation
+- Uses SoX (Sound eXchange) for cross-platform recording
+- Records in WAV format (16kHz, mono, 16-bit) optimized for Whisper
+- Automatic SoX detection across common installation paths
+- Audio validation and temporary file management
 
-### Prerequisites
+### API Integration
 
-Before installing the extension, you need to set up the following requirements:
+- **OpenAI**: Transcription via Whisper and GPT-4o models
+- **OpenRouter**: Text formatting with various LLM providers
+- Robust error handling for API rate limits and authentication
 
-#### 1. Install SoX (Audio Processing Library)
+### File Management
 
-This extension requires SoX for audio recording functionality. Choose one of these installation methods:
+- Temporary audio files stored in `~/Library/Application Support/com.raycast.macos/extensions/dictation-ai/temp`
+- Automatic cleanup of files older than 24 hours
+- No persistent data storage beyond temporary audio files
 
-**Option A: Using Homebrew (Recommended)**
+## Development
+
+### Commands
 
 ```bash
+npm run dev          # Start development mode
+npm run build        # Build extension
+npm run lint         # Run ESLint
+npm run fix-lint     # Fix linting issues
+npm run publish      # Publish to Raycast Store
+```
+
+### Project Structure
+
+```
+src/
+├── dictate.tsx              # Main dictation command
+├── recording-history.tsx    # History management
+├── hooks/
+│   └── useAudioRecorder.ts  # Audio recording logic
+├── utils/
+│   ├── audio.ts            # SoX integration & file management
+│   ├── openai.ts           # OpenAI API integration
+│   ├── formatters.ts       # Text formatting with OpenRouter
+│   ├── clipboard.ts        # Clipboard operations
+│   ├── errors.ts           # Error handling
+│   └── time.ts             # Time/size formatting utilities
+├── types.ts                # TypeScript definitions
+└── constants.ts            # Configuration constants
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**SoX not installed**
+```bash
+# Install via Homebrew
 brew install sox
 ```
 
-**Option B: Using MacPorts**
+**Recording not working**
+- Check microphone permissions in System Preferences
+- Ensure SoX is installed and accessible
+- Try different microphone input sources
 
-```bash
-sudo port install sox
-```
+**API Errors**
+- Verify OpenAI API key has sufficient credits
+- Check OpenRouter API key is valid
+- Ensure internet connection is stable
 
-**Option C: Download from Official Website**
+**File Size Limits**
+- Maximum audio file size: 25MB (OpenAI limit)
+- Minimum audio size: 1KB
+- Files are automatically validated before transcription
 
-- Visit [SoX Official Website](https://sox.sourceforge.net/)
-- Download and install the macOS version
+### Error Messages
 
-**Verify Installation:**
+- `Sox is not installed`: Install SoX using Homebrew or MacPorts
+- `Audio file exceeds 25MB limit`: Recording too long, try shorter sessions
+- `OpenAI API key is required`: Configure API key in preferences
+- `Transcription failed`: Check API key and internet connection
 
-```bash
-sox --version
-```
+## Privacy & Security
 
-#### 2. Get Your OpenAI API Key
+- Audio files are temporarily stored locally and automatically deleted
+- No persistent storage of voice recordings
+- API keys are stored securely in Raycast preferences
+- All API calls use HTTPS encryption
 
-**🔒 Privacy Note: Your API key never leaves your computer. All communication is direct between your device and OpenAI's servers.**
+## License
 
-1. **Create OpenAI Account**
+MIT License - see LICENSE file for details.
 
-   - Go to [OpenAI Platform](https://platform.openai.com/)
-   - Sign up or log in to your account
+## Contributing
 
-2. **Generate API Key**
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-   - Navigate to [API Keys section](https://platform.openai.com/api-keys)
-   - Click "Create new secret key"
-   - Copy the generated key (you won't see it again!)
+## Support
 
-3. **Add Credits (if needed)**
-   - Go to [Billing](https://platform.openai.com/account/billing)
-   - Add payment method and credits as needed
-
-### Installation Steps
-
-1. **Install Extension**
-
-   - Open Raycast
-   - Search for "Store"
-   - Install "Advanced Speech to Text"
-
-2. **Configure API Key**
-
-   - Open Raycast Preferences
-   - Navigate to Extensions → Advanced Speech to Text
-   - Paste your OpenAI API Key in the "OpenAI API Key" field
-
-3. **Customize Settings (Optional)**
-
-   - Select your preferred Whisper model
-   - Choose default language or keep auto-detection
-   - Adjust temperature and response format as needed
-
-4. **Test the Extension**
-   - Open Raycast and search "Dictate"
-   - Grant microphone permissions when prompted
-   - Start your first recording!
-
-### 🎨 Custom Prompt Configuration
-
-You can fully customize how your transcriptions are formatted for different use cases:
-
-#### Accessing Custom Prompts
-
-1. Open Raycast Preferences
-2. Go to Extensions → Speech to Text
-3. Scroll down to find these customizable prompt fields:
-   - **Custom Email Prompt**
-   - **Custom Slack Prompt**
-   - **Custom Report Prompt**
-
-#### How to Customize Prompts
-
-**Example: Professional Email Style**
-
-```
-Transform the following text into a formal business email.
-Use professional language, include proper salutations,
-organize content in clear paragraphs, and end with
-appropriate closing remarks. Maintain executive-level tone.
-```
-
-**Example: Creative Slack Messages**
-
-```
-Convert this text into an engaging Slack message for a marketing team.
-Use relevant emojis, maintain enthusiastic but professional tone,
-include call-to-action elements, and format for easy readability.
-Add appropriate marketing terminology where relevant.
-```
-
-**Example: Technical Documentation**
-
-```
-Transform this into technical documentation format with:
-- **Overview:** Brief summary
-- **Implementation:** Detailed steps
-- **Requirements:** Technical dependencies
-- **Notes:** Important considerations
-Use developer-friendly language and markdown formatting.
-```
-
-#### Prompt Customization Tips
-
-- **Be Specific**: Include exact formatting requirements
-- **Set Tone**: Specify formal, casual, technical, creative, etc.
-- **Include Examples**: Reference specific terminology or style
-- **Define Structure**: Outline how information should be organized
-- **Test & Iterate**: Try different prompts to find what works best
-
-## 🔧 Requirements
-
-- **macOS**: Compatible macOS version
-- **SoX**: Audio processing library (see installation above)
-- **Raycast**: Latest version recommended
-- **OpenAI API Key**: Active account with available credits
-- **Microphone**: Working microphone with system permissions
-- **Internet Connection**: For OpenAI API communication
-
-## 💡 Usage Tips
-
-- **For better results**: Speak clearly in a low-noise environment
-- **Languages**: Auto-detection works very well, but you can specify the language for greater accuracy
-- **Custom prompts**: Experiment with different prompts to adapt the format to your specific needs
-- **History**: Use the "Recording History" command to review and reuse previous transcriptions
-
-## 🆘 Troubleshooting
-
-- **API Error**: Verify that your OpenAI key is valid and has credits
-- **Not recording**: Check microphone permissions in System Settings
-- **Incorrect transcription**: Try with specific language instead of auto-detection
-- **Unwanted format**: Adjust custom prompts in preferences
-
-## 📞 Support
-
-If you have problems or suggestions, you can:
-
-- Review the configuration documentation in Raycast
-- Verify that your OpenAI API key is configured correctly
-- Try different model and temperature settings
-
----
-
-Enjoy using this extension to convert your voice to text efficiently! 🎤✨
+- [Report Issues](https://github.com/smetdenis/raycast-dictation-ai/issues)
+- [Raycast Community](https://raycast.com/community)
+- [OpenAI Documentation](https://platform.openai.com/docs)
+- [OpenRouter Documentation](https://openrouter.ai/docs)
