@@ -87,3 +87,4 @@ Centralized error management through `src/utils/errors.ts`:
 - Multiple language support with auto-detection
 - Requires OpenAI API key configuration
 - SoX must be installed via Homebrew/MacPorts for audio recording
+- Use context7 MCP to load Raycast API documentation when developing extensions
