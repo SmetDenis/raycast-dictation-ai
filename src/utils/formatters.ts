@@ -1,8 +1,8 @@
 import OpenAI from "openai";
 import { getPreferenceValues } from "@raycast/api";
-import { readFile } from "fs/promises";
 import { Preferences, ErrorTypes } from "../types";
 import { handleOpenAIError } from "./errors";
+import { loadPromptFromFile } from "./prompts";
 
 const DEFAULT_FORMATTING_PROMPTS = {
   email: `Transform the following text into a well-structured email, maintaining the original language of the input text. 
@@ -35,40 +35,6 @@ Provide only the translated/improved text without explanations or notes.
 
 Text to translate:`,
 };
-
-function extractPromptFromContent(content: string): string {
-  // Try to find prompt in ## Prompt section with code blocks
-  const promptPattern = /## Prompt\s*```(?:xml|markdown)\s*([\s\S]*?)```/i;
-  const match = content.match(promptPattern);
-  
-  if (match && match[1]) {
-    return match[1].trim();
-  }
-  
-  return content.trim();
-}
-
-async function loadPromptFromFile(filePath?: string): Promise<string | null> {
-  if (!filePath || filePath.trim() === "") {
-    return null;
-  }
-
-  try {
-    const content = await readFile(filePath, "utf-8");
-    return extractPromptFromContent(content);
-  } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      "code" in error &&
-      (error as NodeJS.ErrnoException).code === "ENOENT"
-    ) {
-      console.error(`Prompt file not found: ${filePath}`);
-      throw new Error(ErrorTypes.PROMPT_FILE_NOT_FOUND);
-    }
-    console.error(`Failed to read prompt file: ${filePath}`, error);
-    throw new Error(ErrorTypes.PROMPT_FILE_READ_ERROR);
-  }
-}
 
 async function getFormattingPrompt(
   mode: "email" | "slack" | "report" | "translate",
@@ -146,7 +112,7 @@ export async function formatTextWithChatGPT(
           content: `${prompt}\n\n<input-text>${sanitizedText}</input-text>`,
         },
       ],
-      temperature: 0
+      temperature: 0,
     });
 
     return response.choices[0]?.message?.content?.trim() || text;

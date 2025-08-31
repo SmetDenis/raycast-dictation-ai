@@ -98,13 +98,15 @@ Improves speech recognition for specific names, terms, or abbreviations:
 
 ```
 ## Prompt
-```xml
+```
 Context for speech recognition:
 - Company: Acme Corporation
 - Names: John Smith, Sarah Johnson
 - Technical terms: Kubernetes, PostgreSQL
 - Abbreviations: API, CI/CD, SLA
 ```
+
+*Note: You can optionally specify a language after the opening backticks (e.g., `xml`, `markdown`) or omit it entirely.*
 
 #### Custom Formatting Prompts
 Override default formatting with custom prompts:

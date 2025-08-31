@@ -1,9 +1,9 @@
 import OpenAI from "openai";
 import { createReadStream } from "fs";
-import { readFile } from "fs/promises";
 import { getPreferenceValues } from "@raycast/api";
 import { ErrorTypes, Preferences, DetailedTranscriptionResult } from "../types";
 import { handleOpenAIError } from "./errors";
+import { loadTranscriptionContext } from "./prompts";
 
 export async function transcribeAudioDetailed(
   filePath: string,
@@ -54,33 +54,6 @@ export async function transcribeAudio(filePath: string): Promise<string> {
   return result.text;
 }
 
-function extractTranscriptionContext(content: string): string {
-  // Try to find prompt in ## Prompt section with code blocks
-  const promptPattern = /## Prompt\s*```(?:xml|markdown)\s*([\s\S]*?)```/i;
-  const match = content.match(promptPattern);
-  
-  if (match && match[1]) {
-    return match[1].trim();
-  }
-  
-  return content.trim();
-}
-
-async function loadTranscriptionContext(filePath?: string): Promise<string | undefined> {
-  if (!filePath || filePath.trim() === "") {
-    return undefined;
-  }
-
-  try {
-    const content = await readFile(filePath, "utf-8");
-    const extractedContext = extractTranscriptionContext(content);
-    return extractedContext || undefined;
-  } catch (error) {
-    console.warn(`Failed to read transcription context file: ${filePath}`, error);
-    return undefined;
-  }
-}
-
 async function createTranscription(
   openai: OpenAI,
   audioFile: ReturnType<typeof createReadStream>,
@@ -88,12 +61,15 @@ async function createTranscription(
 ) {
   const rawTemperature = preferences.temperature ?? 0;
   const temperature = Math.max(0, Math.min(1, rawTemperature));
-  const transcriptionContext = await loadTranscriptionContext(preferences.promptFile);
+  const transcriptionContext = await loadTranscriptionContext(
+    preferences.promptFile,
+  );
 
   return openai.audio.transcriptions.create({
     file: audioFile,
     model: preferences.model || "gpt-4o-transcribe",
-    language: preferences.language === "auto" ? undefined : preferences.language,
+    language:
+      preferences.language === "auto" ? undefined : preferences.language,
     prompt: transcriptionContext,
     response_format: "text",
     temperature: temperature,
