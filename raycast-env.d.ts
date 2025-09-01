@@ -28,6 +28,8 @@ type ExtensionPreferences = {
   "customPromptSlackFile"?: string,
   /** Custom Report Prompt File - File containing custom report prompt (leave empty to use default) */
   "customPromptReportFile"?: string,
+  /** Custom Task Prompt File - File containing custom task prompt (leave empty to use default) */
+  "customPromptTaskFile"?: string,
   /** Custom Translation Prompt File - File containing custom translation prompt (leave empty to use default) */
   "customPromptTranslateFile"?: string
 }

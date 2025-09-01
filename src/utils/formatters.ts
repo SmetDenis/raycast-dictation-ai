@@ -29,6 +29,30 @@ Maintain a clear, professional and action-oriented format.
 
 Text to format:`,
 
+  task: `Transform the following text into a structured task with a clear title and actionable items, maintaining the original language of the input text.
+
+Format the output as:
+# [Task Title - clear, concise description of the main objective]
+
+## Action Items:
+- [ ] [First actionable item]
+- [ ] [Second actionable item]
+- [ ] [Third actionable item]
+
+If the input contains diverse information, group related actions together and create logical sections like:
+## Setup/Preparation:
+- [ ] [preparation items]
+
+## Implementation:
+- [ ] [main work items]
+
+## Review/Completion:
+- [ ] [final steps]
+
+Focus on creating clear, actionable items that can be checked off. Break down complex tasks into smaller, manageable steps.
+
+Text to format:`,
+
   translate: `Translate the following text to English. Maintain the original tone, style, and meaning. 
 If the text is already in English, improve grammar and clarity while preserving the original message. 
 Provide only the translated/improved text without explanations or notes.
@@ -37,7 +61,7 @@ Text to translate:`,
 };
 
 async function getFormattingPrompt(
-  mode: "email" | "slack" | "report" | "translate",
+  mode: "email" | "slack" | "report" | "task" | "translate",
 ): Promise<string> {
   const preferences = getPreferenceValues<Preferences>();
 
@@ -60,6 +84,12 @@ async function getFormattingPrompt(
           preferences.customPromptReportFile,
         );
         return reportPrompt || DEFAULT_FORMATTING_PROMPTS.report;
+      }
+      case "task": {
+        const taskPrompt = await loadPromptFromFile(
+          preferences.customPromptTaskFile,
+        );
+        return taskPrompt || DEFAULT_FORMATTING_PROMPTS.task;
       }
       case "translate": {
         const translatePrompt = await loadPromptFromFile(
@@ -88,7 +118,7 @@ function sanitizeText(text: string): string {
 
 export async function formatTextWithChatGPT(
   text: string,
-  mode: "email" | "slack" | "report" | "translate",
+  mode: "email" | "slack" | "report" | "task" | "translate",
 ): Promise<string> {
   const preferences = getPreferenceValues<Preferences>();
   const prompt = await getFormattingPrompt(mode);

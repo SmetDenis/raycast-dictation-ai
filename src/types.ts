@@ -36,6 +36,7 @@ export type FormatMode =
   | "email"
   | "slack"
   | "report"
+  | "task"
   | "translate"
   | "original";
 
@@ -58,6 +59,7 @@ export interface Preferences {
   customPromptEmailFile?: string;
   customPromptSlackFile?: string;
   customPromptReportFile?: string;
+  customPromptTaskFile?: string;
   customPromptTranslateFile?: string;
 }
 

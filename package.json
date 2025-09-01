@@ -183,6 +183,13 @@
       "description": "File containing custom report prompt (leave empty to use default)"
     },
     {
+      "name": "customPromptTaskFile",
+      "type": "file",
+      "required": false,
+      "title": "Custom Task Prompt File",
+      "description": "File containing custom task prompt (leave empty to use default)"
+    },
+    {
       "name": "customPromptTranslateFile",
       "type": "file",
       "required": false,

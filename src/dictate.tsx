@@ -269,6 +269,14 @@ export default function Dictate() {
       keywords: ["email", "mail", "professional", "business", "formal"],
     },
     {
+      id: "task",
+      title: "Task List",
+      subtitle: "Create structured task with action items",
+      icon: Icon.CheckList,
+      description: "Transform into a task with title and checkboxes",
+      keywords: ["task", "todo", "checklist", "action", "items", "list"],
+    },
+    {
       id: "report",
       title: "Report Format",
       subtitle: "Detailed report structure",
@@ -315,6 +323,11 @@ export default function Dictate() {
               title="Format for Slack"
               onAction={() => handleFormatText("slack")}
               icon={Icon.Message}
+            />
+            <Action
+              title="Format as Task List"
+              onAction={() => handleFormatText("task")}
+              icon={Icon.CheckList}
             />
             <Action
               title="Format as Report"
