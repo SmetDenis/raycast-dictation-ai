@@ -72,9 +72,9 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       // Start recording using spawn for better security
       recordingProcessRef.current = spawn(commandArgs[0], commandArgs.slice(1));
 
-      recordingProcessRef.current.stderr?.on("data", (data) => {
-        console.log("Sox stderr:", data.toString());
-      });
+      // recordingProcessRef.current.stderr?.on("data", (data) => {
+      //   console.log("Sox stderr:", data.toString());
+      // });
 
       recordingProcessRef.current.on("error", (error) => {
         console.error("Recording error:", error);

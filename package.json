@@ -58,15 +58,15 @@
       "required": false,
       "title": "Whisper Model",
       "description": "Select the transcription model",
-      "default": "gpt-4o-transcribe",
+      "default": "whisper-1",
       "data": [
-        {
-          "title": "GPT-4o Transcribe - Latest model with enhanced understanding",
-          "value": "gpt-4o-transcribe"
-        },
         {
           "title": "Whisper-1 (Large-v2) - Most accurate, 99+ languages",
           "value": "whisper-1"
+        },
+        {
+          "title": "GPT-4o Transcribe - Latest model with enhanced understanding",
+          "value": "gpt-4o-transcribe"
         }
       ]
     },

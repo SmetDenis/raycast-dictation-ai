@@ -14,9 +14,7 @@ export async function transcribeAudioDetailed(
     throw new Error(ErrorTypes.API_KEY_MISSING);
   }
 
-  const openai = new OpenAI({
-    apiKey: preferences.openaiApiKey,
-  });
+  const openai = new OpenAI({apiKey: preferences.openaiApiKey});
 
   let audioFile: ReturnType<typeof createReadStream> | undefined;
 
@@ -61,13 +59,11 @@ async function createTranscription(
 ) {
   const rawTemperature = preferences.temperature ?? 0;
   const temperature = Math.max(0, Math.min(1, rawTemperature));
-  const transcriptionContext = await loadTranscriptionContext(
-    preferences.promptFile,
-  );
+  const transcriptionContext = await loadTranscriptionContext(preferences.promptFile);
 
   return openai.audio.transcriptions.create({
     file: audioFile,
-    model: preferences.model || "gpt-4o-transcribe",
+    model: preferences.model || "whisper-1",
     language:
       preferences.language === "auto" ? undefined : preferences.language,
     prompt: transcriptionContext,

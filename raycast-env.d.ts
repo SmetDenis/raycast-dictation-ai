@@ -15,7 +15,7 @@ type ExtensionPreferences = {
   /** OpenRouter Model - OpenRouter model ID for text formatting (e.g., google/gemini-2.5-flash, openai/gpt-4o-mini, anthropic/claude-3.5-sonnet) */
   "openrouterModel": string,
   /** Whisper Model - Select the transcription model */
-  "model": "gpt-4o-transcribe" | "whisper-1",
+  "model": "whisper-1" | "gpt-4o-transcribe",
   /** Language - Language for transcription (auto-detect if not specified) */
   "language": "auto" | "en" | "es" | "fr" | "de" | "it" | "pt" | "zh" | "ja" | "ko" | "ru",
   /** Custom Transcription Context File - File with context to improve speech recognition accuracy (names, technical terms, abbreviations) */
