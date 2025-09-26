@@ -192,10 +192,8 @@ export default function Dictate() {
   const handlePasteToSelectedField = async () => {
     if (formattedText) {
       try {
-        const shouldShowActions = await copyAndPaste(formattedText);
-        if (!shouldShowActions) {
-          await popToRoot();
-        }
+        await copyAndPasteAction(formattedText);
+        await popToRoot();
       } catch (err) {
         await showToast({
           style: Toast.Style.Failure,
@@ -356,56 +354,67 @@ export default function Dictate() {
               title="Copy to Clipboard"
               onAction={handleCopyAgain}
               icon={Icon.Clipboard}
+              shortcut={{ modifiers: ["cmd"], key: "c" }}
             />
             <Action
               title="Paste Only"
               onAction={handlePasteOnly}
               icon={Icon.Wand}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "v" }}
             />
             <Action
               title="Copy & Paste"
               onAction={handleCopyAndPasteAction}
               icon={Icon.CopyClipboard}
+              shortcut={{ modifiers: ["cmd"], key: "v" }}
             />
             <Action
               title="Copy Only"
               onAction={handleCopyOnly}
               icon={Icon.Clipboard}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "c" }}
             />
             <Action
               title="Format as Email"
               onAction={() => handleFormatText("email")}
               icon={Icon.Envelope}
+              shortcut={{ modifiers: ["cmd"], key: "e" }}
             />
             <Action
               title="Format for Slack"
               onAction={() => handleFormatText("slack")}
               icon={Icon.Message}
+              shortcut={{ modifiers: ["cmd"], key: "s" }}
             />
             <Action
               title="Format as Task List"
               onAction={() => handleFormatText("task")}
               icon={Icon.CheckList}
+              shortcut={{ modifiers: ["cmd"], key: "t" }}
             />
             <Action
               title="Format as Report"
               onAction={() => handleFormatText("report")}
               icon={Icon.Document}
+              shortcut={{ modifiers: ["cmd"], key: "r" }}
             />
             <Action
               title="Translate to English"
               onAction={() => handleFormatText("translate")}
               icon={Icon.Globe}
+              shortcut={{ modifiers: ["cmd"], key: "l" }}
             />
             <Action
               title="Use Original"
               onAction={() => handleFormatText("original")}
               icon={Icon.Pencil}
+              shortcut={{ modifiers: ["cmd"], key: "o" }}
             />
             <Action
               title="New Recording"
               onAction={handleNewRecording}
               icon={Icon.Microphone}
+              shortcut={{ modifiers: ["cmd"], key: "n" }}
             />
           </ActionPanel>
         }
@@ -427,6 +436,7 @@ export default function Dictate() {
                 title="Try Again"
                 onAction={handleNewRecording}
                 icon={Icon.ArrowClockwise}
+                shortcut={{ modifiers: ["cmd"], key: "r" }}
               />
             </ActionPanel>
           }
@@ -466,6 +476,7 @@ export default function Dictate() {
                   title="Stop and Transcribe"
                   onAction={handleStopAndTranscribe}
                   icon={Icon.Stop}
+                  shortcut={{ modifiers: [], key: "enter" }}
                 />
                 <Action
                   title="Cancel Recording"
@@ -492,6 +503,7 @@ export default function Dictate() {
                       handleStopAndTranscribeWithFormat(mode.id as FormatMode)
                     }
                     icon={mode.icon}
+                    shortcut={{ modifiers: ["cmd"], key: mode.id === "email" ? "e" : mode.id === "slack" ? "s" : mode.id === "task" ? "t" : mode.id === "report" ? "r" : "l" }}
                   />
                   <Action
                     title="Cancel Recording"
