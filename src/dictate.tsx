@@ -254,12 +254,25 @@ export default function Dictate() {
   };
 
   const handleNewRecording = async () => {
-    setTranscriptionState("recording");
-    setTranscription("");
-    setFormattedText("");
-    setCurrentFormat("original");
-    setErrorMessage("");
-    await startRecording();
+    try {
+      setTranscriptionState("recording");
+      setTranscription("");
+      setFormattedText("");
+      setCurrentFormat("original");
+      setErrorMessage("");
+      setSearchText("");
+      await startRecording();
+      await showToast({
+        style: Toast.Style.Success,
+        title: "New Recording Started",
+        message: "Speak now. Press Enter to stop and transcribe.",
+      });
+    } catch (err) {
+      setTranscriptionState("error");
+      const errorMsg = getErrorMessage(err);
+      setErrorMessage(errorMsg);
+      await showErrorToast("Error starting new recording", err);
+    }
   };
 
   const getSearchPlaceholder = (): string => {
@@ -294,28 +307,20 @@ export default function Dictate() {
 
   const formatModes = [
     {
+      id: "translate",
+      title: "Translate to English",
+      subtitle: "Translate and improve text",
+      icon: Icon.Globe,
+      description: "Translate to English or improve English text",
+      keywords: ["translate", "english", "improve", "language", "global"],
+    },
+    {
       id: "slack",
       title: "Slack Message",
       subtitle: "Format for Slack communication",
       icon: Icon.Message,
       description: "Optimized for Slack messages with proper formatting",
       keywords: ["slack", "chat", "message", "communication", "team"],
-    },
-    {
-      id: "email",
-      title: "Email Format",
-      subtitle: "Email formatting",
-      icon: Icon.Envelope,
-      description: "Structured for email communication",
-      keywords: ["email", "mail", "professional", "business", "formal"],
-    },
-    {
-      id: "task",
-      title: "Task List",
-      subtitle: "Create structured task with action items",
-      icon: Icon.CheckList,
-      description: "Transform into a task with title and checkboxes",
-      keywords: ["task", "todo", "checklist", "action", "items", "list"],
     },
     {
       id: "report",
@@ -326,12 +331,20 @@ export default function Dictate() {
       keywords: ["report", "document", "formal", "structure", "detailed"],
     },
     {
-      id: "translate",
-      title: "Translate to English",
-      subtitle: "Translate and improve text",
-      icon: Icon.Globe,
-      description: "Translate to English or improve English text",
-      keywords: ["translate", "english", "improve", "language", "global"],
+      id: "task",
+      title: "Task List",
+      subtitle: "Create structured task with action items",
+      icon: Icon.CheckList,
+      description: "Transform into a task with title and checkboxes",
+      keywords: ["task", "todo", "checklist", "action", "items", "list"],
+    },
+    {
+      id: "email",
+      title: "Email Format",
+      subtitle: "Email formatting",
+      icon: Icon.Envelope,
+      description: "Structured for email communication",
+      keywords: ["email", "mail", "professional", "business", "formal"],
     },
   ];
 
@@ -409,12 +422,6 @@ export default function Dictate() {
               onAction={() => handleFormatText("original")}
               icon={Icon.Pencil}
               shortcut={{ modifiers: ["cmd"], key: "o" }}
-            />
-            <Action
-              title="New Recording"
-              onAction={handleNewRecording}
-              icon={Icon.Microphone}
-              shortcut={{ modifiers: ["cmd"], key: "n" }}
             />
           </ActionPanel>
         }
