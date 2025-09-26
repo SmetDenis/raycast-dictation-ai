@@ -10,12 +10,20 @@ npm run dev          # Start Raycast development mode
 npm run build        # Build the extension
 npm run lint         # Run ESLint
 npm run fix-lint     # Fix ESLint issues automatically
+npm run test         # Run Jest tests
+npm run test:watch   # Run Jest tests in watch mode
+npm run test:coverage # Run Jest tests with coverage report
 npm run publish      # Publish to Raycast Store
+
+# Testing specific files or patterns
+npx jest src/utils/audio.test.ts              # Run specific test file
+npx jest --testNamePattern="SoX detection"    # Run tests matching pattern
+npx jest --verbose                             # Run with detailed output
 ```
 
 ## Architecture Overview
 
-This is a Raycast extension for speech-to-text transcription using OpenAI's Whisper and GPT models. The extension provides instant voice recording with automatic transcription and smart text formatting.
+This is a Raycast extension for speech-to-text transcription using OpenAI's Whisper models and text formatting via OpenRouter. The extension provides instant voice recording with automatic transcription and smart text formatting.
 
 ### Core Architecture
 
@@ -26,15 +34,17 @@ This is a Raycast extension for speech-to-text transcription using OpenAI's Whis
 
 **Key Utilities:**
 - `src/utils/audio.ts` - Audio file management, SoX integration, and audio validation
-- `src/utils/openai.ts` - OpenAI API integration for transcription
-- `src/utils/formatters.ts` - Text formatting with ChatGPT for different output modes (email, slack, report, translate)
+- `src/utils/openai.ts` - OpenAI API integration for transcription (Whisper & GPT-4o)
+- `src/utils/formatters.ts` - Text formatting with OpenRouter for different output modes
+- `src/utils/prompts.ts` - Custom prompt loading and extraction utilities
 - `src/utils/clipboard.ts` - Clipboard operations and text pasting automation
+- `src/utils/errors.ts` - Centralized error handling for API and system errors
 
 ### Data Flow
 
 1. **Recording Phase**: User opens dictate command → auto-starts SoX recording → shows live duration
-2. **Transcription Phase**: User stops recording → validates audio file → sends to OpenAI Whisper API
-3. **Formatting Phase** (optional): Raw transcription → ChatGPT formatting based on selected mode → final output
+2. **Transcription Phase**: User stops recording → validates audio file → sends to OpenAI API (Whisper or GPT-4o)
+3. **Formatting Phase** (optional): Raw transcription → OpenRouter formatting based on selected mode → final output
 4. **Output Phase**: Auto-paste to active field (original mode) or show formatted result for user action
 
 ### Format Modes System
@@ -42,14 +52,15 @@ This is a Raycast extension for speech-to-text transcription using OpenAI's Whis
 The extension supports multiple output formats through a unified system:
 - **Original**: Raw transcription, auto-pastes immediately
 - **Email**: Professional email formatting with greetings/closings
-- **Slack**: Casual message formatting for team communication  
+- **Slack**: Casual message formatting for team communication
 - **Report**: Structured task/project reporting format
+- **Task**: Structured task list format with actionable items
 - **Translate**: Translation to English or English text improvement
 
 Each mode has:
 - Default prompts in `src/utils/formatters.ts`
-- User-customizable prompts via Raycast preferences
-- Unified processing through `formatTextWithChatGPT()` function
+- User-customizable prompts via Raycast preferences (file-based)
+- Unified processing through `formatTextWithOpenRouter()` function
 
 ### Audio System
 
@@ -76,18 +87,38 @@ Centralized error management through `src/utils/errors.ts`:
 ### Key Dependencies
 
 - `@raycast/api` - Raycast extension framework
-- `openai` - Official OpenAI SDK for transcription and formatting
-- `sox` (system) - Audio recording (must be installed separately)
+- `@raycast/utils` - Raycast utility functions
+- `openai` - Official OpenAI SDK for transcription
 - `title-case` - Text formatting utilities
+- `sox` (system) - Audio recording (must be installed separately)
+
+### Testing Setup
+
+Uses Jest with TypeScript support:
+- Configuration: `jest.config.js` (ts-jest preset)
+- Test files: `**/*.test.ts` or `**/*.spec.ts` patterns
+- Coverage: Excludes type definitions and constants files
+- Roots: Tests can be in `src/` or dedicated `tests/` directory
 
 ### Development Notes
 
 - Extension auto-starts recording when opened for immediate use
+- Supports both Whisper-1 and GPT-4o Transcribe models for transcription
+- OpenRouter integration for text formatting with multiple model options (default: google/gemini-2.5-flash)
 - Temperature setting affects both transcription and formatting creativity
-- Multiple language support with auto-detection
-- Requires OpenAI API key configuration
+- Multiple language support with auto-detection (10+ languages)
+- Custom prompt files supported for both transcription context and formatting
+- Two API keys required: OpenAI (transcription) and OpenRouter (formatting)
 - SoX must be installed via Homebrew/MacPorts for audio recording
 - Use context7 MCP to load Raycast API documentation when developing extensions
+
+### Custom Prompt System
+
+The extension supports custom prompt files for enhanced functionality:
+- **Transcription Context**: Improves accuracy for specific names, terms, abbreviations
+- **Formatting Prompts**: Custom prompts for Email, Slack, Report, Task, and Translation modes
+- **File Format**: Uses `## Prompt` section with optional code blocks for structured content
+- **Prompt Loading**: Handled by `src/utils/prompts.ts` with fallback to defaults
 
 ## Documentation Synchronization Rules
 
