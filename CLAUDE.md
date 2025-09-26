@@ -62,6 +62,20 @@ Each mode has:
 - User-customizable prompts via Raycast preferences (file-based)
 - Unified processing through `formatTextWithOpenRouter()` function
 
+### Paste Behavior System
+
+The extension supports four paste behavior modes configurable via Raycast preferences:
+- **Paste only**: Direct paste without copying to clipboard first
+- **Copy and paste**: Copy to clipboard, then paste to active field
+- **Copy only**: Copy to clipboard without pasting
+- **Show with action buttons**: Display text in UI with manual action selection
+
+Paste behaviors are handled through `src/utils/clipboard.ts` with individual functions:
+- `pasteOnly()` - Direct paste with fallback to copy
+- `copyAndPasteAction()` - Copy then paste workflow
+- `copyOnly()` - Clipboard copy only
+- `copyAndPaste()` - Main handler that returns boolean indicating if UI should show actions
+
 ### Audio System
 
 Uses SoX (Sound eXchange) as external dependency for cross-platform audio recording:
