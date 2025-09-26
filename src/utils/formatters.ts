@@ -124,25 +124,25 @@ export async function formatTextWithChatGPT(
   const prompt = await getFormattingPrompt(mode);
   const sanitizedText = sanitizeText(text);
 
-  if (!preferences.openrouterApiKey) {
-    throw new Error(ErrorTypes.OPENROUTER_API_KEY_MISSING);
+  if (!preferences.openaiApiKey) {
+    throw new Error(ErrorTypes.OPENAI_API_KEY_MISSING);
   }
 
-  const openrouter = new OpenAI({
-    apiKey: preferences.openrouterApiKey,
-    baseURL: "https://openrouter.ai/api/v1",
+  const openai = new OpenAI({
+    apiKey: preferences.openaiApiKey,
+    baseURL: preferences.baseURL || "https://api.openai.com/v1",
   });
 
   try {
-    const response = await openrouter.chat.completions.create({
-      model: preferences.openrouterModel || "google/gemini-2.5-flash",
+    const response = await openai.chat.completions.create({
+      model: preferences.formattingModel || "gpt-4o",
       messages: [
         {
           role: "user",
           content: `${prompt}\n\n<input-text>${sanitizedText}</input-text>`,
         },
       ],
-      temperature: 0,
+      temperature: parseFloat(preferences.temperature || "0"),
     });
 
     return response.choices[0]?.message?.content?.trim() || text;

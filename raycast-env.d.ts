@@ -10,12 +10,12 @@
 type ExtensionPreferences = {
   /** OpenAI API Key - Your OpenAI API key for speech transcription */
   "openaiApiKey": string,
-  /** OpenRouter API Key - Your OpenRouter API key for text formatting */
-  "openrouterApiKey": string,
-  /** OpenRouter Model - OpenRouter model ID for text formatting (e.g., google/gemini-2.5-flash, openai/gpt-4o-mini, anthropic/claude-3.5-sonnet) */
-  "openrouterModel": string,
-  /** Whisper Model - Select the transcription model */
-  "model": "whisper-1" | "gpt-4o-transcribe",
+  /** Transcription Model - OpenAI model for speech transcription (e.g., whisper-1, gpt-4o-transcribe) */
+  "model": string,
+  /** Formatting Model - OpenAI model for text formatting (e.g., gpt-4o, gpt-4o-mini, gpt-3.5-turbo) */
+  "formattingModel": string,
+  /** Base URL - OpenAI-compatible API base URL for both transcription and formatting */
+  "baseURL": string,
   /** Language - Language for transcription (auto-detect if not specified) */
   "language": "auto" | "en" | "es" | "fr" | "de" | "it" | "pt" | "zh" | "ja" | "ko" | "ru",
   /** Paste Behavior - What to do with formatted text after transcription */

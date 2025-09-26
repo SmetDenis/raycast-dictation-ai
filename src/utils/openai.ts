@@ -11,10 +11,13 @@ export async function transcribeAudioDetailed(
   const preferences = getPreferenceValues<Preferences>();
 
   if (!preferences.openaiApiKey) {
-    throw new Error(ErrorTypes.API_KEY_MISSING);
+    throw new Error(ErrorTypes.OPENAI_API_KEY_MISSING);
   }
 
-  const openai = new OpenAI({apiKey: preferences.openaiApiKey});
+  const openai = new OpenAI({
+    apiKey: preferences.openaiApiKey,
+    baseURL: preferences.baseURL || "https://api.openai.com/v1",
+  });
 
   let audioFile: ReturnType<typeof createReadStream> | undefined;
 
@@ -31,6 +34,14 @@ export async function transcribeAudioDetailed(
     if (typeof transcription === "string") {
       return {
         text: transcription.trim(),
+        format: "text",
+      };
+    }
+
+    // Since we always use text format, response will be a string
+    if (typeof transcription === "object") {
+      return {
+        text: transcription.text.trim(),
         format: "text",
       };
     }

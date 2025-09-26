@@ -37,38 +37,31 @@
       "description": "Your OpenAI API key for speech transcription"
     },
     {
-      "name": "openrouterApiKey",
-      "type": "password",
-      "required": true,
-      "title": "OpenRouter API Key",
-      "description": "Your OpenRouter API key for text formatting"
-    },
-    {
-      "name": "openrouterModel",
+      "name": "model",
       "type": "textfield",
       "required": false,
-      "title": "OpenRouter Model",
-      "description": "OpenRouter model ID for text formatting (e.g., google/gemini-2.5-flash, openai/gpt-4o-mini, anthropic/claude-3.5-sonnet)",
-      "default": "google/gemini-2.5-flash",
-      "placeholder": "google/gemini-2.5-flash"
+      "title": "Transcription Model",
+      "description": "OpenAI model for speech transcription (e.g., whisper-1, gpt-4o-transcribe)",
+      "default": "whisper-1",
+      "placeholder": "whisper-1"
     },
     {
-      "name": "model",
-      "type": "dropdown",
+      "name": "formattingModel",
+      "type": "textfield",
       "required": false,
-      "title": "Whisper Model",
-      "description": "Select the transcription model",
-      "default": "whisper-1",
-      "data": [
-        {
-          "title": "Whisper-1 (Large-v2) - Most accurate, 99+ languages",
-          "value": "whisper-1"
-        },
-        {
-          "title": "GPT-4o Transcribe - Latest model with enhanced understanding",
-          "value": "gpt-4o-transcribe"
-        }
-      ]
+      "title": "Formatting Model",
+      "description": "OpenAI model for text formatting (e.g., gpt-4o, gpt-4o-mini, gpt-3.5-turbo)",
+      "default": "gpt-4o",
+      "placeholder": "gpt-4o"
+    },
+    {
+      "name": "baseURL",
+      "type": "textfield",
+      "required": false,
+      "title": "Base URL",
+      "description": "OpenAI-compatible API base URL for both transcription and formatting",
+      "default": "https://api.openai.com/v1",
+      "placeholder": "https://api.openai.com/v1"
     },
     {
       "name": "language",
