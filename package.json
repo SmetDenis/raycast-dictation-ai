@@ -125,6 +125,28 @@
       ]
     },
     {
+      "name": "pasteBehavior",
+      "type": "dropdown",
+      "required": false,
+      "title": "Paste Behavior",
+      "description": "What to do with formatted text after transcription",
+      "default": "paste",
+      "data": [
+        {
+          "title": "Paste only (no clipboard copy)",
+          "value": "paste"
+        },
+        {
+          "title": "Copy to clipboard and paste",
+          "value": "copy_and_paste"
+        },
+        {
+          "title": "Copy to clipboard only",
+          "value": "copy"
+        }
+      ]
+    },
+    {
       "name": "promptFile",
       "type": "file",
       "required": false,
