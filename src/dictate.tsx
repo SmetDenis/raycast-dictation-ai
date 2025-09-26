@@ -16,6 +16,9 @@ import {
   copyAndPaste,
   copyToClipboard,
   formatTranscriptionText,
+  pasteOnly,
+  copyAndPasteAction,
+  copyOnly,
 } from "./utils/clipboard";
 import { formatTextWithChatGPT } from "./utils/formatters";
 import { Preferences, TranscriptionState, FormatMode } from "./types";
@@ -106,9 +109,11 @@ export default function Dictate() {
 
             // Auto-copy, paste, and close for original format (Stop and Transcribe)
             try {
-              await copyAndPaste(formattedResult);
-              await popToRoot();
-              return;
+              const shouldShowActions = await copyAndPaste(formattedResult);
+              if (!shouldShowActions) {
+                await popToRoot();
+                return;
+              }
             } catch (err) {
               await showToast({
                 style: Toast.Style.Failure,
@@ -116,10 +121,10 @@ export default function Dictate() {
                 message:
                   "Could not insert text. Text is still available for manual copy/paste.",
               });
-              // Keep window open by setting state to completed
-              setTranscriptionState("completed");
-              setFormattedText(formattedResult);
             }
+            // Keep window open if in show mode or if there was an error
+            setTranscriptionState("completed");
+            setFormattedText(formattedResult);
           }
 
           setTranscriptionState("completed");
@@ -187,7 +192,24 @@ export default function Dictate() {
   const handlePasteToSelectedField = async () => {
     if (formattedText) {
       try {
-        await copyAndPaste(formattedText);
+        const shouldShowActions = await copyAndPaste(formattedText);
+        if (!shouldShowActions) {
+          await popToRoot();
+        }
+      } catch (err) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Paste Error",
+          message: "Could not insert text",
+        });
+      }
+    }
+  };
+
+  const handlePasteOnly = async () => {
+    if (formattedText) {
+      try {
+        await pasteOnly(formattedText);
         await popToRoot();
       } catch (err) {
         await showToast({
@@ -196,6 +218,27 @@ export default function Dictate() {
           message: "Could not insert text",
         });
       }
+    }
+  };
+
+  const handleCopyAndPasteAction = async () => {
+    if (formattedText) {
+      try {
+        await copyAndPasteAction(formattedText);
+        await popToRoot();
+      } catch (err) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "Paste Error",
+          message: "Could not insert text",
+        });
+      }
+    }
+  };
+
+  const handleCopyOnly = async () => {
+    if (formattedText) {
+      await copyOnly(formattedText);
     }
   };
 
@@ -312,6 +355,21 @@ export default function Dictate() {
             <Action
               title="Copy to Clipboard"
               onAction={handleCopyAgain}
+              icon={Icon.Clipboard}
+            />
+            <Action
+              title="Paste Only"
+              onAction={handlePasteOnly}
+              icon={Icon.Wand}
+            />
+            <Action
+              title="Copy & Paste"
+              onAction={handleCopyAndPasteAction}
+              icon={Icon.CopyClipboard}
+            />
+            <Action
+              title="Copy Only"
+              onAction={handleCopyOnly}
               icon={Icon.Clipboard}
             />
             <Action

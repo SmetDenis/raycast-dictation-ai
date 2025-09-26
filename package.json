@@ -143,6 +143,10 @@
         {
           "title": "Copy to clipboard only",
           "value": "copy"
+        },
+        {
+          "title": "Show with action buttons",
+          "value": "show"
         }
       ]
     },

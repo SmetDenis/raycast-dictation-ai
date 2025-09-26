@@ -19,7 +19,7 @@ type ExtensionPreferences = {
   /** Language - Language for transcription (auto-detect if not specified) */
   "language": "auto" | "en" | "es" | "fr" | "de" | "it" | "pt" | "zh" | "ja" | "ko" | "ru",
   /** Paste Behavior - What to do with formatted text after transcription */
-  "pasteBehavior": "paste" | "copy_and_paste" | "copy",
+  "pasteBehavior": "paste" | "copy_and_paste" | "copy" | "show",
   /** Custom Transcription Context File - File with context to improve speech recognition accuracy (names, technical terms, abbreviations) */
   "promptFile"?: string,
   /** Temperature - Sampling temperature for more creative or conservative transcription */
