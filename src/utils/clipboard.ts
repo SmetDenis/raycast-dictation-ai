@@ -23,49 +23,27 @@ export async function copyAndPaste(text: string): Promise<void> {
 
   const behavior = preferences.pasteBehavior || "paste";
 
-  switch (behavior) {
-    case "paste":
-      // Paste without copying to clipboard first
-      try {
-        await Clipboard.paste(text);
-        await showHUD("✅ Text automatically inserted");
-      } catch (error) {
-        // Fallback to copy if paste fails
-        await Clipboard.copy(text);
-        await showHUD("📋 Text copied to clipboard (paste with Cmd+V)");
-      }
-      break;
-
-    case "copy_and_paste":
-      // Copy to clipboard and then paste
+  if (behavior === "paste") {
+    try {
+      await Clipboard.paste(text);
+      await showHUD("✅ Text automatically inserted");
+    } catch (error) {
       await Clipboard.copy(text);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await showHUD("📋 Text copied to clipboard (paste with Cmd+V)");
+    }
+  } else if (behavior === "copy") {
+    await Clipboard.copy(text);
+    await showHUD("📋 Text copied to clipboard");
+  } else {
+    await Clipboard.copy(text);
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
-      try {
-        await Clipboard.paste(text);
-        await showHUD("✅ Text copied and automatically inserted");
-      } catch (error) {
-        await showHUD("📋 Text copied to clipboard (paste with Cmd+V)");
-      }
-      break;
-
-    case "copy":
-      // Only copy to clipboard
-      await Clipboard.copy(text);
-      await showHUD("📋 Text copied to clipboard");
-      break;
-
-    default:
-      // Fallback to original behavior
-      await Clipboard.copy(text);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      try {
-        await Clipboard.paste(text);
-        await showHUD("✅ Text copied and automatically inserted");
-      } catch (error) {
-        await showHUD("📋 Text copied to clipboard (paste with Cmd+V)");
-      }
+    try {
+      await Clipboard.paste(text);
+      await showHUD("✅ Text copied and automatically inserted");
+    } catch (error) {
+      await showHUD("📋 Text copied to clipboard (paste with Cmd+V)");
+    }
   }
 }
 
