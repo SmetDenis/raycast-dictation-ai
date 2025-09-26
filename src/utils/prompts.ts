@@ -6,37 +6,41 @@ import { ErrorTypes } from "../types";
  * Supports ## Prompt section with code blocks allowing any characters after ```
  */
 export function extractPromptFromContent(content: string): string {
-  // Find ## Prompt section with ``` 
+  // Find ## Prompt section with ```
   const promptHeaderPattern = /##\s+Prompt\s*\n?\s*```.*?\n/i;
   const headerMatch = content.match(promptHeaderPattern);
-  
+
   if (!headerMatch) {
     return content.trim();
   }
-  
+
   // Get everything after the header
   const afterHeader = content.slice(headerMatch.index! + headerMatch[0].length);
-  
+
   // Look for closing ``` that's at the beginning of a line, end of line, or end of string
   const closingBacktickMatch = afterHeader.match(/(^```$|```$)/m);
-  
+
   if (closingBacktickMatch) {
     // Extract content before closing backticks and everything after
-    const beforeClosing = afterHeader.slice(0, closingBacktickMatch.index).trim();
-    const afterClosing = afterHeader.slice(closingBacktickMatch.index! + closingBacktickMatch[0].length);
-    
+    const beforeClosing = afterHeader
+      .slice(0, closingBacktickMatch.index)
+      .trim();
+    const afterClosing = afterHeader.slice(
+      closingBacktickMatch.index! + closingBacktickMatch[0].length,
+    );
+
     if (afterClosing.trim()) {
       // If there's content after closing backticks, check if it ends with ``` and remove it
       let finalContent = beforeClosing + afterClosing;
-      if (finalContent.endsWith('\n```')) {
+      if (finalContent.endsWith("\n```")) {
         finalContent = finalContent.slice(0, -4);
       }
       return finalContent;
     }
-    
+
     return beforeClosing;
   }
-  
+
   // No closing backticks found, return everything after header trimmed
   return afterHeader.trim();
 }

@@ -70,7 +70,9 @@ async function createTranscription(
 ) {
   const rawTemperature = preferences.temperature ?? 0;
   const temperature = Math.max(0, Math.min(1, rawTemperature));
-  const transcriptionContext = await loadTranscriptionContext(preferences.promptFile);
+  const transcriptionContext = await loadTranscriptionContext(
+    preferences.promptFile,
+  );
 
   return openai.audio.transcriptions.create({
     file: audioFile,

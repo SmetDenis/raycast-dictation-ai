@@ -510,7 +510,19 @@ export default function Dictate() {
                       handleStopAndTranscribeWithFormat(mode.id as FormatMode)
                     }
                     icon={mode.icon}
-                    shortcut={{ modifiers: ["cmd"], key: mode.id === "email" ? "e" : mode.id === "slack" ? "s" : mode.id === "task" ? "t" : mode.id === "report" ? "r" : "l" }}
+                    shortcut={{
+                      modifiers: ["cmd"],
+                      key:
+                        mode.id === "email"
+                          ? "e"
+                          : mode.id === "slack"
+                            ? "s"
+                            : mode.id === "task"
+                              ? "t"
+                              : mode.id === "report"
+                                ? "r"
+                                : "l",
+                    }}
                   />
                   <Action
                     title="Cancel Recording"
