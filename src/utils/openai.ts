@@ -70,6 +70,8 @@ async function createTranscription(
 ) {
   const rawTemperature = preferences.temperature ?? 0;
   const temperature = Math.max(0, Math.min(1, rawTemperature));
+  const lang =
+    preferences.language === "auto" ? undefined : preferences.language;
   const transcriptionContext = await loadTranscriptionContext(
     preferences.promptFile,
   );
@@ -77,8 +79,7 @@ async function createTranscription(
   return openai.audio.transcriptions.create({
     file: audioFile,
     model: preferences.model || "whisper-1",
-    language:
-      preferences.language === "auto" ? undefined : preferences.language,
+    language: lang,
     prompt: transcriptionContext,
     response_format: "text",
     temperature: temperature,
