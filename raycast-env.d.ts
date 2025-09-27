@@ -33,7 +33,9 @@ type ExtensionPreferences = {
   /** Custom Task Prompt File - File containing custom task prompt (leave empty to use default) */
   "customPromptTaskFile"?: string,
   /** Custom Translation Prompt File - File containing custom translation prompt (leave empty to use default) */
-  "customPromptTranslateFile"?: string
+  "customPromptTranslateFile"?: string,
+  /** Transcription History Limit - Maximum number of transcriptions to store in history (0 = disabled, -1 = unlimited) */
+  "transcriptionHistoryLimit": "0" | "5" | "10" | "20" | "50" | "100" | "-1"
 }
 
 /** Preferences accessible in all the extension's commands */
@@ -44,6 +46,8 @@ declare namespace Preferences {
   export type Dictate = ExtensionPreferences & {}
   /** Preferences accessible in the `recording-history` command */
   export type RecordingHistory = ExtensionPreferences & {}
+  /** Preferences accessible in the `transcription-history` command */
+  export type TranscriptionHistory = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
@@ -51,5 +55,7 @@ declare namespace Arguments {
   export type Dictate = {}
   /** Arguments passed to the `recording-history` command */
   export type RecordingHistory = {}
+  /** Arguments passed to the `transcription-history` command */
+  export type TranscriptionHistory = {}
 }
 

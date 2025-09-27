@@ -58,6 +58,7 @@ export interface Preferences {
   customPromptReportFile?: string;
   customPromptTaskFile?: string;
   customPromptTranslateFile?: string;
+  transcriptionHistoryLimit: string;
 }
 
 export interface TranscriptionMetadata {

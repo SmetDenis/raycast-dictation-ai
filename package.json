@@ -26,6 +26,12 @@
       "title": "Recording History",
       "description": "View and manage recording history",
       "mode": "view"
+    },
+    {
+      "name": "transcription-history",
+      "title": "Transcription History",
+      "description": "View history of the last 10 transcribed messages",
+      "mode": "view"
     }
   ],
   "preferences": [
@@ -214,6 +220,44 @@
       "required": false,
       "title": "Custom Translation Prompt File",
       "description": "File containing custom translation prompt (leave empty to use default)"
+    },
+    {
+      "name": "transcriptionHistoryLimit",
+      "type": "dropdown",
+      "required": false,
+      "title": "Transcription History Limit",
+      "description": "Maximum number of transcriptions to store in history (0 = disabled, -1 = unlimited)",
+      "default": "10",
+      "data": [
+        {
+          "title": "Disabled (0)",
+          "value": "0"
+        },
+        {
+          "title": "5 messages",
+          "value": "5"
+        },
+        {
+          "title": "10 messages (default)",
+          "value": "10"
+        },
+        {
+          "title": "20 messages",
+          "value": "20"
+        },
+        {
+          "title": "50 messages",
+          "value": "50"
+        },
+        {
+          "title": "100 messages",
+          "value": "100"
+        },
+        {
+          "title": "Unlimited (-1)",
+          "value": "-1"
+        }
+      ]
     }
   ],
   "dependencies": {

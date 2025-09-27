@@ -30,6 +30,7 @@ This is a Raycast extension for speech-to-text transcription and text formatting
 **Main Components:**
 - `src/dictate.tsx` - Primary command that handles the recording → transcription → formatting workflow
 - `src/recording-history.tsx` - History management command for viewing/managing past recordings
+- `src/transcription-history.tsx` - History management command for viewing past transcription texts
 - `src/hooks/useAudioRecorder.ts` - Audio recording hook using SoX system dependency
 
 **Key Utilities:**
@@ -40,13 +41,15 @@ This is a Raycast extension for speech-to-text transcription and text formatting
 - `src/utils/clipboard.ts` - Clipboard operations and text pasting automation with multiple paste behaviors
 - `src/utils/errors.ts` - Centralized error handling for API and system errors
 - `src/utils/time.ts` - Time and file size formatting utilities
+- `src/utils/history.ts` - Transcription history management with local storage
 
 ### Data Flow
 
 1. **Recording Phase**: User opens dictate command → auto-starts SoX recording → shows live duration
 2. **Transcription Phase**: User stops recording → validates audio file → sends to OpenAI API (Whisper or GPT-4o Transcribe)
-3. **Formatting Phase** (optional): Raw transcription → OpenAI language model formatting based on selected mode → final output
-4. **Output Phase**: Configurable behavior via paste preferences (paste only, copy and paste, copy only, or show with actions)
+3. **History Storage**: Original transcription is automatically saved to local storage (configurable limit)
+4. **Formatting Phase** (optional): Raw transcription → OpenAI language model formatting based on selected mode → final output
+5. **Output Phase**: Configurable behavior via paste preferences (paste only, copy and paste, copy only, or show with actions)
 
 ### Format Modes System
 
@@ -89,8 +92,8 @@ Clipboard functions in `src/utils/clipboard.ts`:
 ### File Storage
 
 - Audio files: `${environment.supportPath}/temp` (auto-cleanup after 24 hours)
+- Transcription history: Raycast LocalStorage (persistent, configurable limit)
 - Configuration: Raycast preferences system
-- No persistent data storage beyond temporary audio files
 
 ### Error Handling
 
@@ -119,12 +122,14 @@ Centralized error management through `src/utils/errors.ts`:
 - `language` (dropdown) - Transcription language with auto-detection support (11 languages)
 - `pasteBehavior` (dropdown) - Text output behavior (paste, copy_and_paste, copy, show)
 - `temperature` (dropdown) - Sampling temperature (0, 0.2, 0.5, 0.8, 1.0)
+- `transcriptionHistoryLimit` (dropdown) - History limit (0=disabled, 5-100 messages, -1=unlimited, default: 10)
 - `promptFile` (file) - Custom transcription context file
 - Custom prompt files for each format mode (email, slack, report, task, translate)
 
 **Commands:**
 - `dictate` - Main recording and transcription command with auto-start
 - `recording-history` - View and manage recording history with transcription capability
+- `transcription-history` - View history of the last transcribed messages (original text only)
 
 ### Keyboard Shortcuts
 
@@ -154,6 +159,12 @@ Centralized error management through `src/utils/errors.ts`:
 - `Cmd+R` - Re-transcribe file
 - `Cmd+Shift+R` - Refresh file list
 
+**In Transcription History:**
+- `Cmd+C` - Copy transcription to clipboard
+- `Cmd+Delete` - Delete transcription from history
+- `Cmd+Shift+Delete` - Clear all history
+- `Cmd+R` - Refresh history list
+
 ### Testing Setup
 
 Uses Jest with TypeScript support:
@@ -173,6 +184,9 @@ Uses Jest with TypeScript support:
 - `TranscriptionState` - Recording/processing state machine ("idle" | "recording" | "transcribing" | "completed" | "formatting" | "error")
 - `Preferences` - User preference interface matching package.json
 - `DetailedTranscriptionResult` - Extended transcription response with metadata
+
+**History Types (`src/utils/history.ts`):**
+- `TranscriptionHistoryItem` - Single transcription history entry with text, timestamp, and metadata
 
 **Paste Behavior Type:**
 - `PasteBehavior` - "paste" | "copy_and_paste" | "copy" | "show"

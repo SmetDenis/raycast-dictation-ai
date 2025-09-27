@@ -1,4 +1,4 @@
-# Dictation AI
+# RayCast - Dictation AI
 
 A powerful Raycast extension that converts speech to text and formats the output using OpenAI's advanced language models. Perfect for quick dictation, note-taking, and professional communication with intelligent text formatting.
 
@@ -14,6 +14,7 @@ A powerful Raycast extension that converts speech to text and formats the output
 - **Multiple Output Formats**: Original, Email, Slack, Report, Task List, and Translation modes
 - **Flexible Paste Behavior**: Four modes - paste only, copy & paste, copy only, or show with action buttons
 - **Recording History**: View and manage past recordings with transcriptions
+- **Transcription History**: View history of transcribed text messages with configurable storage limit
 - **Custom Prompts**: Use custom prompt files for transcription context and formatting
 - **Keyboard Shortcuts**: Comprehensive hotkeys for efficient workflow
 - **Multi-Language Support**: Supports 11 languages with auto-detection
@@ -109,6 +110,15 @@ Configure how text is handled after transcription:
 - Copy transcriptions to clipboard
 - Automatic file cleanup after 24 hours
 
+### Transcription History
+
+- Access via "Transcription History" command
+- View history of the last transcribed messages (original text only)
+- Configurable storage limit (0=disabled, 5-100 messages, unlimited)
+- Copy transcriptions to clipboard
+- Delete individual entries or clear all history
+- Persistent storage using Raycast LocalStorage
+
 ## Configuration
 
 ### Transcription Settings
@@ -130,6 +140,13 @@ Configure how text is handled after transcription:
 
 - **Paste Behavior**: Choose how text is handled after processing
   - Paste only, Copy and paste, Copy only, Show with action buttons
+
+### History Settings
+
+- **Transcription History Limit**: Configure how many transcriptions to store
+  - Options: Disabled (0), 5-100 messages, Unlimited (-1)
+  - Default: 10 messages
+  - Automatically saves original transcriptions to local storage
 
 ### Custom Prompts
 
@@ -161,7 +178,8 @@ Keep it friendly and conversational, focusing on progress and next steps.
 ### Core Components
 
 - **Dictate Command** (`src/dictate.tsx`): Main recording and transcription workflow with state management
-- **Recording History** (`src/recording-history.tsx`): History management interface
+- **Recording History** (`src/recording-history.tsx`): History management interface for audio files
+- **Transcription History** (`src/transcription-history.tsx`): History management interface for transcribed text
 - **Audio Recorder Hook** (`src/hooks/useAudioRecorder.ts`): SoX integration for recording
 
 ### Audio System
@@ -182,7 +200,7 @@ Keep it friendly and conversational, focusing on progress and next steps.
 
 - Temporary audio files stored in `~/Library/Application Support/com.raycast.macos/extensions/dictation-ai/temp`
 - Automatic cleanup of files older than 24 hours
-- No persistent data storage beyond temporary audio files
+- Transcription history stored persistently using Raycast LocalStorage
 - File validation and size limit enforcement
 
 ### Clipboard Operations
@@ -213,7 +231,8 @@ npm run publish      # Publish to Raycast Store
 ```
 src/
 ├── dictate.tsx              # Main dictation command
-├── recording-history.tsx    # History management
+├── recording-history.tsx    # Audio file history management
+├── transcription-history.tsx # Text transcription history management
 ├── hooks/
 │   └── useAudioRecorder.ts  # Audio recording logic
 ├── utils/
@@ -223,6 +242,7 @@ src/
 │   ├── clipboard.ts        # Clipboard operations with paste behaviors
 │   ├── errors.ts           # Centralized error handling
 │   ├── prompts.ts          # Custom prompt loading utilities
+│   ├── history.ts          # Transcription history storage
 │   └── time.ts             # Time/size formatting utilities
 ├── types.ts                # TypeScript definitions
 └── constants.ts            # Configuration constants
@@ -275,6 +295,7 @@ brew install sox
 
 - Audio files are temporarily stored locally and automatically deleted after 24 hours
 - No persistent storage of voice recordings
+- Transcription history stored locally using Raycast's secure LocalStorage
 - API keys are stored securely in Raycast preferences
 - All API calls use HTTPS encryption
 - No telemetry or usage tracking
@@ -303,6 +324,8 @@ MIT License - see LICENSE file for details.
 
 ### Recent Updates
 
+- **Transcription History**: New command to view and manage history of transcribed text messages
+- **Configurable History Limit**: Set storage limit from 0 (disabled) to unlimited
 - **Unified OpenAI Integration**: Removed OpenRouter dependency, now uses only OpenAI for all operations
 - **Flexible Model Configuration**: Text fields for custom model selection
 - **Enhanced Paste Behavior**: Four distinct modes including "show with actions"

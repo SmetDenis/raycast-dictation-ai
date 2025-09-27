@@ -24,6 +24,7 @@ import { formatTextWithChatGPT } from "./utils/formatters";
 import { Preferences, TranscriptionState, FormatMode } from "./types";
 import { formatDuration } from "./utils/time";
 import { getErrorMessage, showErrorToast } from "./utils/errors";
+import { saveTranscriptionToHistory } from "./utils/history";
 
 export default function Dictate() {
   const preferences = getPreferenceValues<Preferences>();
@@ -81,6 +82,9 @@ export default function Dictate() {
           const result = await transcribeAudio(recordingPath);
           const formattedResult = formatTranscriptionText(result);
           setTranscription(formattedResult);
+
+          // Save original transcription to history
+          await saveTranscriptionToHistory(formattedResult);
 
           // If a specific format was selected, format the text
           if (currentFormat !== "original") {
