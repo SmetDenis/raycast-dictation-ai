@@ -5,21 +5,21 @@ import { handleOpenAIError } from "./errors";
 import { loadPromptFromFile } from "./prompts";
 
 const DEFAULT_FORMATTING_PROMPTS = {
-  email: `Transform the following text into a well-structured email, maintaining the original language of the input text. 
-Analyze the tone and style of the input text (casual, professional, cordial, informal, etc.) and maintain that same tone throughout. 
-Add an appropriate greeting like "Hi," and closing like "Cheers," that matches the detected tone. Do not use placeholders like [name] or [signature]. 
+  email: `Transform the following text into a well-structured email, maintaining the original language of the input text.
+Analyze the tone and style of the input text (casual, professional, cordial, informal, etc.) and maintain that same tone throughout.
+Add an appropriate greeting like "Hi," and closing like "Cheers," that matches the detected tone. Do not use placeholders like [name] or [signature].
 Organize the information in clear paragraphs. Only return the email text, without subject.
 
 Text to format:`,
 
-  slack: `Clean up and format the following transcription maintaining the original language, tone, style and words. 
-Only fix small inconsistencies, errors, and organize the text into proper paragraphs with correct punctuation. 
+  slack: `Clean up and format the following transcription maintaining the original language, tone, style and words.
+Only fix small inconsistencies, errors, and organize the text into proper paragraphs with correct punctuation.
 Do not add emojis, greetings, or closings. Do not change the conversational style or add formalities.
 Simply present the cleaned transcription with proper formatting.
 
 Text to format:`,
 
-  report: `Transform the following text into a structured report for a task management system, maintaining the original language of the input text. 
+  report: `Transform the following text into a structured report for a task management system, maintaining the original language of the input text.
 Organize the information with:
 - **Objective/Task:** [clear description of what needs to be done]
 - **Details:** [specific information and steps if any]
@@ -53,8 +53,8 @@ Focus on creating clear, actionable items that can be checked off. Break down co
 
 Text to format:`,
 
-  translate: `Translate the following text to English. Maintain the original tone, style, and meaning. 
-If the text is already in English, improve grammar and clarity while preserving the original message. 
+  translate: `Translate the following text to English. Maintain the original tone, style, and meaning.
+If the text is already in English, improve grammar and clarity while preserving the original message.
 Provide only the translated/improved text without explanations or notes.
 
 Text to translate:`,
@@ -142,7 +142,7 @@ export async function formatTextWithChatGPT(
           content: `${prompt}\n\n<input-text>${sanitizedText}</input-text>`,
         },
       ],
-      temperature: parseFloat(preferences.temperature || "0"),
+      temperature: parseFloat((preferences.temperature ?? "0").toString()),
     });
 
     return response.choices[0]?.message?.content?.trim() || text;

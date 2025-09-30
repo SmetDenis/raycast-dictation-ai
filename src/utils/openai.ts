@@ -5,6 +5,10 @@ import { ErrorTypes, Preferences, DetailedTranscriptionResult } from "../types";
 import { handleOpenAIError } from "./errors";
 import { loadTranscriptionContext } from "./prompts";
 
+interface OpenAITranscription {
+  text: string;
+}
+
 export async function transcribeAudioDetailed(
   filePath: string,
 ): Promise<DetailedTranscriptionResult> {
@@ -38,10 +42,9 @@ export async function transcribeAudioDetailed(
       };
     }
 
-    // Since we always use text format, response will be a string
-    if (typeof transcription === "object") {
+    if (typeof transcription === "object" && transcription !== null) {
       return {
-        text: transcription.text.trim(),
+        text: (transcription as OpenAITranscription).text?.trim() || "",
         format: "text",
       };
     }
